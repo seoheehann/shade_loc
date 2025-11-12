@@ -4,7 +4,7 @@ let markers = [];
 
 // 데이터 로드
 async function loadData() {
-  const res = await fetch("shade_data.csv");
+  const res = await fetch("모두 들은 파일.csv");
   const text = await res.text();
   const rows = text.trim().split("\n").map((r) => r.split(","));
   const headers = rows.shift().map((h) => h.replace(/\r/g, "").trim());
