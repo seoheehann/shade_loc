@@ -1,1 +1,21 @@
-
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>그늘막 설치 우선순위 대시보드</title>
+  <script src="script.js" defer></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>그늘막 설치 우선순위</h1>
+  <div class="buttons">
+    <button onclick="filterTop(5)">Top 5</button>
+    <button onclick="filterTop(10)">Top 10</button>
+    <button onclick="showAll()">전체보기</button>
+  </div>
+  <table id="dataTable">
+    <thead></thead>
+    <tbody></tbody>
+  </table>
+</body>
+</html>
