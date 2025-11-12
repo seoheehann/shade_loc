@@ -16,11 +16,9 @@ function renderTable(dataset) {
   const thead = table.querySelector('thead');
   const tbody = table.querySelector('tbody');
 
-  // 헤더 출력
   thead.innerHTML = '<tr>' + Object.keys(dataset[0])
     .map(h => `<th>${h}</th>`).join('') + '</tr>';
 
-  // 데이터 행 출력
   tbody.innerHTML = dataset.map(row => '<tr>' +
     Object.values(row).map(v => `<td>${v}</td>`).join('') +
   '</tr>').join('');
