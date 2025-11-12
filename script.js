@@ -1,7 +1,7 @@
 let data = [];
 
 async function loadData() {
-  const response = await fetch('shade_data.csv');
+  const response = await fetch('모두 들은 파일.csv');
   const text = await response.text();
 
   const rows = text.trim().split('\n').map(r => r.split(','));
