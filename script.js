@@ -78,7 +78,7 @@ function showAll() {
 window.onload = function () {
   initMap();
 
-  Papa.parse("data.csv", {
+  Papa.parse("모두 들은 파일.csv", {
     download: true,
     header: true,
     complete: function (results) {
