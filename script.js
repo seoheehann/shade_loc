@@ -1,44 +1,44 @@
-// CSV 파일 읽기 및 시각화
 let map;
+let markers = []; // 지도 마커 저장
+let fullData = []; // CSV 전체 데이터 저장
 
-document.addEventListener("DOMContentLoaded", () => {
-  map = L.map("map").setView([37.55, 126.98], 11);
+// 1) 지도 초기화
+function initMap() {
+  map = L.map("map").setView([37.5665, 126.9780], 11);
 
-  // 기본 타일 (지도 배경)
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom: 19,
   }).addTo(map);
+}
 
-  // CSV 파일 로드
-  fetch("모두 들은 파일.csv")
-    .then((response) => response.text())
-    .then((data) => {
-      const rows = Papa.parse(data, { header: true }).data;
+// 2) 모든 마커 삭제
+function clearMarkers() {
+  markers.forEach((m) => map.removeLayer(m));
+  markers = [];
+}
 
-      // 지도에 점 찍기
-      rows.forEach((row) => {
-        const x = parseFloat(row["X좌표"]); // 경도
-        const y = parseFloat(row["Y좌표"]); // 위도
-        const name = row["정류소명"];
+// 3) 특정 데이터 배열로 지도 렌더링
+function renderMarkers(rows) {
+  clearMarkers();
 
-        // 좌표가 유효할 때만 마커 추가
-        if (!isNaN(x) && !isNaN(y)) {
-          const marker = L.marker([y, x]).addTo(map);
-          marker.bindPopup(`<b>${name}</b><br>${x}, ${y}`);
-        }
-      });
+  rows.forEach((row) => {
+    let x = parseFloat(row["X좌표"]);
+    let y = parseFloat(row["Y좌표"]);
+    if (!x || !y) return;
 
-      // 표 생성
-      makeTable(rows);
-    });
-});
+    let marker = L.marker([y, x]).addTo(map);
+    marker.bindPopup(`${row["정류소명"]}<br>${x}, ${y}`);
+    markers.push(marker);
+  });
+}
 
-// 테이블 표시
-function makeTable(data) {
-  const tableHead = document.querySelector("#dataTable thead");
-  const tableBody = document.querySelector("#dataTable tbody");
+// 4) 테이블 렌더링
+function renderTable(rows) {
+  const tbody = document.querySelector("#dataTable tbody");
+  const thead = document.querySelector("#dataTable thead");
 
-  tableHead.innerHTML = `
+  tbody.innerHTML = "";
+  thead.innerHTML = `
     <tr>
       <th>NODE_ID</th>
       <th>ARS_ID</th>
@@ -47,9 +47,7 @@ function makeTable(data) {
     </tr>
   `;
 
-  tableBody.innerHTML = "";
-
-  data.forEach((row) => {
+  rows.forEach((row) => {
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td>${row["NODE_ID"]}</td>
@@ -57,6 +55,39 @@ function makeTable(data) {
       <td>${row["정류소명"]}</td>
       <td>${row["우선순위"]}</td>
     `;
-    tableBody.appendChild(tr);
+    tbody.appendChild(tr);
   });
 }
+
+// 5) 필터링 함수 (Top 5 / Top 10)
+function filterTop(n) {
+  const sliced = fullData.slice(0, n);
+  renderTable(sliced);
+  renderMarkers(sliced);
+}
+
+// 6) 전체 데이터 표시
+function showAll() {
+  renderTable(fullData);
+  renderMarkers(fullData);
+}
+
+// 7) CSV 로딩
+window.onload = function () {
+  initMap();
+
+  Papa.parse("data.csv", {
+    download: true,
+    header: true,
+    complete: function (results) {
+      fullData = results.data.filter(
+        (r) => r["X좌표"] && r["Y좌표"] && r["우선순위"]
+      );
+
+      // 우선순위 기준 정렬 (내림차순)
+      fullData.sort((a, b) => b["우선순위"] - a["우선순위"]);
+
+      showAll();
+    },
+  });
+};
