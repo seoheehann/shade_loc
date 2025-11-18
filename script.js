@@ -1,5 +1,5 @@
 let map;
-let markers = []; // 지도 마커 저장
+let markers = []; // 지도 마커 모음
 let fullData = []; // CSV 전체 데이터 저장
 
 // 1) 지도 초기화
@@ -11,24 +11,25 @@ function initMap() {
   }).addTo(map);
 }
 
-// 2) 모든 마커 삭제
+// 2) 기존 마커 지우기
 function clearMarkers() {
   markers.forEach((m) => map.removeLayer(m));
   markers = [];
 }
 
-// 3) 특정 데이터 배열로 지도 렌더링
+// 3) 지도에 마커 표시
 function renderMarkers(rows) {
   clearMarkers();
 
   rows.forEach((row) => {
-    let x = parseFloat(row["X좌표"]);
-    let y = parseFloat(row["Y좌표"]);
-    if (!x || !y) return;
+    const x = row.X좌표;
+    const y = row.Y좌표;
 
-    let marker = L.marker([y, x]).addTo(map);
-    marker.bindPopup(`${row["정류소명"]}<br>${x}, ${y}`);
-    markers.push(marker);
+    if (!isNaN(x) && !isNaN(y)) {
+      const marker = L.marker([y, x]).addTo(map);
+      marker.bindPopup(`${row.정류소명}<br>${x}, ${y}`);
+      markers.push(marker);
+    }
   });
 }
 
@@ -37,7 +38,6 @@ function renderTable(rows) {
   const tbody = document.querySelector("#dataTable tbody");
   const thead = document.querySelector("#dataTable thead");
 
-  tbody.innerHTML = "";
   thead.innerHTML = `
     <tr>
       <th>NODE_ID</th>
@@ -47,26 +47,28 @@ function renderTable(rows) {
     </tr>
   `;
 
+  tbody.innerHTML = "";
+
   rows.forEach((row) => {
     const tr = document.createElement("tr");
     tr.innerHTML = `
-      <td>${row["NODE_ID"]}</td>
-      <td>${row["ARS_ID"]}</td>
-      <td>${row["정류소명"]}</td>
-      <td>${row["우선순위"]}</td>
+      <td>${row.NODE_ID}</td>
+      <td>${row.ARS_ID}</td>
+      <td>${row.정류소명}</td>
+      <td>${row.우선순위}</td>
     `;
     tbody.appendChild(tr);
   });
 }
 
-// 5) 필터링 함수 (Top 5 / Top 10)
+// 5) Top N 필터
 function filterTop(n) {
   const sliced = fullData.slice(0, n);
   renderTable(sliced);
   renderMarkers(sliced);
 }
 
-// 6) 전체 데이터 표시
+// 6) 전체보기
 function showAll() {
   renderTable(fullData);
   renderMarkers(fullData);
@@ -80,13 +82,18 @@ window.onload = function () {
     download: true,
     header: true,
     complete: function (results) {
-      fullData = results.data.filter(
-        (r) => r["X좌표"] && r["Y좌표"] && r["우선순위"]
-      );
+      fullData = results.data
+        .map((r) => ({
+          NODE_ID: r["NODE_ID"],
+          ARS_ID: r["ARS_ID"],
+          정류소명: r["정류소명"],
+          X좌표: parseFloat(r["X좌표"]),
+          Y좌표: parseFloat(r["Y좌표"]),
+          우선순위: parseFloat(r["우선순위"]),
+        }))
+        .filter((r) => !isNaN(r.X좌표) && !isNaN(r.Y좌표) && !isNaN(r.우선순위));
 
-      // 우선순위 기준 정렬 (내림차순)
-      fullData.sort((a, b) => b["우선순위"] - a["우선순위"]);
-
+      // 너가 이미 CSV에서 정렬했으므로 sort는 안 함!
       showAll();
     },
   });
