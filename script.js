@@ -27,7 +27,7 @@ function renderMarkers(rows) {
 
     if (!isNaN(x) && !isNaN(y)) {
       const marker = L.marker([y, x]).addTo(map);
-      marker.bindPopup(`${row.정류소명}');
+      marker.bindPopup(`${row.정류소명}`);
       markers.push(marker);
     }
   });
