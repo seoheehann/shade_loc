@@ -1,15 +1,28 @@
 body { font-family: "Noto Sans KR", sans-serif; margin: 0; padding: 20px; }
 h1 { margin-bottom: 10px; }
 .buttons { margin-bottom: 10px; }
-button {
-  margin-right: 8px;
-  padding: 8px 16px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  background: #fafafa;
+.buttons button {
+  background: white;
+  border: 2px solid #1b2a4e;
+  padding: 10px 22px;
+  border-radius: 25px;
+  font-size: 18px;
   cursor: pointer;
+  transition: 0.2s;
 }
-button:hover { background: #eee; }
+
+.buttons button:hover {
+  background: #1b2a4e;
+  color: white;
+}
+
+.buttons button.active {
+  background: #ff4d4d;
+  border-color: #ff4d4d;
+  color: white;
+}
+
+}
 
 #dashboard { display: flex; gap: 16px; flex-wrap: wrap; }
 #map { height: 600px; flex: 1 1 60%; border-radius: 12px; }
