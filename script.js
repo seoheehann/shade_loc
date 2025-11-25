@@ -70,7 +70,7 @@ function renderTable(rows) {
 
   tbody.innerHTML = "";
 
-  rows.forEach((row) => {
+  rows.forEach((row,index) => {
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td>${row.NODE_ID}</td>
@@ -78,6 +78,17 @@ function renderTable(rows) {
       <td>${row.정류소명}</td>
       <td>${row.우선순위}</td>
     `;
+
+    tr.addEventListener("mouseenter", () => {
+      tr.classList.add("hovered");
+      if (markers[index]) markers[index]._icon.classList.add("marker-highlight");
+    });
+
+    tr.addEventListener("mouseleave", () => {
+      tr.classList.remove("hovered");
+      if (markers[index]) markers[index]._icon.classList.remove("marker-highlight");
+    });
+    
     tbody.appendChild(tr);
   });
 }
