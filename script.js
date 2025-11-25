@@ -2,10 +2,10 @@ let map;
 let markers = [];
 let fullData = [];
 
-let roadview; 
-let roadviewClient = new kakao.maps.RoadviewClient();
+// ✅ 로드뷰 DOM 요소
+let roadviewContainer = null;
 
-// 1) 지도 초기화
+// ✅ 1) 지도 초기화
 function initMap() {
   map = L.map("map").setView([37.5665, 126.9780], 11);
 
@@ -13,17 +13,16 @@ function initMap() {
     maxZoom: 19,
   }).addTo(map);
 
-  // 로드뷰 영역 초기화
-  roadview = new kakao.maps.Roadview(document.getElementById("roadview"));
+  roadviewContainer = document.getElementById("roadview");
 }
 
-// 2) 기존 마커 지우기
+// ✅ 2) 기존 마커 지우기
 function clearMarkers() {
   markers.forEach((m) => map.removeLayer(m));
   markers = [];
 }
 
-// 3) 지도에 마커 표시 + 로드뷰 기능 추가
+// ✅ 3) 지도에 마커 표시 + 로드뷰 기능
 function renderMarkers(rows) {
   clearMarkers();
 
@@ -35,14 +34,19 @@ function renderMarkers(rows) {
       const marker = L.marker([y, x]).addTo(map);
       marker.bindPopup(`${row.정류소명}`);
 
-      // ✅ 마커 클릭 시 로드뷰 표시
+      // ✅ 클릭 시 로드뷰 표시 (카카오 로드뷰가 있을 때만)
       marker.on("click", () => {
-        const position = new kakao.maps.LatLng(y, x);
-        roadviewClient.getNearestPanoId(position, 50, function (panoId) {
-          if (panoId) {
-            roadview.setPanoId(panoId, position);
-          }
-        });
+        if (typeof kakao !== "undefined") {
+          const roadview = new kakao.maps.Roadview(roadviewContainer);
+          const client = new kakao.maps.RoadviewClient();
+          const position = new kakao.maps.LatLng(y, x);
+
+          client.getNearestPanoId(position, 50, (panoId) => {
+            if (panoId) {
+              roadview.setPanoId(panoId, position);
+            }
+          });
+        }
       });
 
       markers.push(marker);
@@ -50,7 +54,7 @@ function renderMarkers(rows) {
   });
 }
 
-// 4) 테이블 렌더링 (변경 없음)
+// ✅ 4) 테이블 렌더링
 function renderTable(rows) {
   const tbody = document.querySelector("#dataTable tbody");
   const thead = document.querySelector("#dataTable thead");
@@ -78,20 +82,20 @@ function renderTable(rows) {
   });
 }
 
-// 5) Top N 필터
+// ✅ 5) Top N 필터
 function filterTop(n) {
   const sliced = fullData.slice(0, n);
   renderTable(sliced);
   renderMarkers(sliced);
 }
 
-// 6) 전체보기
+// ✅ 6) 전체 표시
 function showAll() {
   renderTable(fullData);
   renderMarkers(fullData);
 }
 
-// 7) CSV 로딩
+// ✅ 7) CSV 로딩
 window.onload = function () {
   initMap();
 
