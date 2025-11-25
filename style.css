@@ -32,6 +32,26 @@ table {
   min-width: 360px;
   font-size: 14px;
 }
+
+#dataTable {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 16px;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+#dataTable thead {
+  background: #1b2a4e;
+  color: white;
+}
+
+#dataTable tbody tr:hover {
+  background: #f5f6fa;
+}
+
+
 th, td {
   border: 1px solid #ddd;
   padding: 6px;
