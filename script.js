@@ -26,7 +26,7 @@ function clearMarkers() {
 function renderMarkers(rows) {
   clearMarkers();
 
-  rows.forEach((row) => {
+  rows.forEach((row, index) => {
     const x = parseFloat(row.X좌표);
     const y = parseFloat(row.Y좌표);
 
@@ -49,7 +49,7 @@ function renderMarkers(rows) {
         }
       });
 
-      markers.push({marker, rowIndex: index);
+    markers.push({ marker, rowIndex: index });
     }
   });
 }
@@ -81,13 +81,14 @@ function renderTable(rows) {
       <td>${row.우선순위}</td>
     `;
 
-    tr.addEventListener("click", () => {
-      const markerObj = markers[index];
-      if (markerObj) {
-        markerObj.leafletMarker.fire("click");
-        highlightTableRow(index);
-      }
-    });
+tr.addEventListener("click", () => {
+  const markerObj = markers[index];
+  if (markerObj) {
+    markerObj.marker.fire("click");
+    highlightTableRow(index);
+  }
+});
+
     tbody.appendChild(tr);
   });
 }
