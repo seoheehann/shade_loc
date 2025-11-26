@@ -93,7 +93,7 @@ th, td {
 
 /* hover 시 강조 */
 tr.hovered {
-  background-color: #ffe08a !important;
+  background-color: #f5f6fa !important;
 }
 
 /* 마커 하이라이트 */
