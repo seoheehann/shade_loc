@@ -18,7 +18,7 @@ function initMap() {
 
 // ✅ 2) 기존 마커 지우기
 function clearMarkers() {
-  markers.forEach((m) => map.removeLayer(m));
+  markers.forEach((m) => map.removeLayer(m.marker));
   markers = [];
 }
 
