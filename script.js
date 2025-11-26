@@ -49,7 +49,7 @@ function renderMarkers(rows) {
         }
       });
 
-      markers.push(marker);
+      markers.push({marker, rowIndex: index);
     }
   });
 }
@@ -85,6 +85,7 @@ function renderTable(rows) {
       const markerObj = markers[index];
       if (markerObj) {
         markerObj.leafletMarker.fire("click");
+        highlightTableRow(index);
       }
     });
     tbody.appendChild(tr);
