@@ -91,6 +91,12 @@ function renderTable(rows) {
   });
 }
 
+function highlightTableRow(index) {
+  const rows = document.querySelectorAll("#dataTable tbody tr");
+  rows.forEach((r) => r.classList.remove("hovered"));
+  if (rows[index]) rows[index].classList.add("hovered");
+}
+
 // ✅ 5) Top N 필터
 function filterTop(n) {
   const sliced = fullData.slice(0, n);
