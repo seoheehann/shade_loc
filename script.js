@@ -61,23 +61,32 @@ function renderTable(rows) {
 
   thead.innerHTML = `
     <tr>
+      <th>우선순위</th>
       <th>NODE_ID</th>
       <th>ARS_ID</th>
       <th>정류소명</th>
-      <th>우선순위</th>
+      <th>우선순위 점수</th>
     </tr>
   `;
 
   tbody.innerHTML = "";
 
-  rows.forEach((row) => {
+  rows.forEach((row,index) => {
     const tr = document.createElement("tr");
     tr.innerHTML = `
+      <td>${index+1}</td>
       <td>${row.NODE_ID}</td>
       <td>${row.ARS_ID}</td>
       <td>${row.정류소명}</td>
       <td>${row.우선순위}</td>
     `;
+
+    tr.addEventListener("click", () => {
+      const markerObj = markers[index];
+      if (markerObj) {
+        markerObj.leafletMarker.fire("click");
+      }
+    });
     tbody.appendChild(tr);
   });
 }
